@@ -45,10 +45,12 @@ class LeNetModern(nn.Module):
         # ======================================================================
         self.feature_extractor = nn.Sequential(
             # Replace with modernized layers:
-            # nn.Conv2d(..., padding=2),
-            # nn.ReLU(inplace=True),
-            # nn.MaxPool2d(kernel_size=3, stride=2),
-            # ...
+            nn.Conv2d(in_channels, 6, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(6, 16, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2)
         )
 
         # ======================================================================
@@ -63,16 +65,21 @@ class LeNetModern(nn.Module):
         # ======================================================================
         self.classifier = nn.Sequential(
             # Replace with dense layers using ReLU:
-            # nn.Linear(...),
-            # nn.ReLU(inplace=True),
-            # ...
+            nn.Linear(16 * 15 * 15, 120),
+            nn.ReLU(inplace=True),
+            nn.Linear(120, 84),
+            nn.ReLU(inplace=True),
+            nn.Linear(84, num_classes)
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # ======================================================================
         # TODO [IN-LAB STEP 4]: Implement Forward Pass
         # ======================================================================
-        pass
+        x = self.feature_extractor(x)
+        x = torch.flatten(x, start_dim=1)
+        x = self.classifier(x)
+        return x
 
 if __name__ == "__main__":
     from torchinfo import summary
