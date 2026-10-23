@@ -1,0 +1,27 @@
+# Run from the project directory.
+python -m utils.eda --dataset cifar10
+python -m utils.eda --dataset tiny_imagenet
+python demo_transforms.py
+python compare_models.py --dataset cifar10
+
+# CIFAR-10
+python train.py --model lenet --dataset cifar10 --epochs 5 --no-augment --save-model checkpoints/lenet_baseline.pth --plot-file plots/loss_lenet.png
+python train.py --model lenet_modern --dataset cifar10 --epochs 5 --no-augment --save-model checkpoints/lenet_modern.pth --plot-file plots/loss_lenet_modern.png
+python train.py --model alexnet --norm none --dataset cifar10 --epochs 10 --no-augment
+python train.py --model alexnet --norm lrn --dataset cifar10 --epochs 10 --no-augment
+python train.py --model alexnet --norm bn --dataset cifar10 --epochs 10 --no-augment --save-model checkpoints/alexnet_bn.pth --plot-file plots/loss_alexnet_bn.png
+python train.py --model alexnet --norm bn --dataset cifar10 --epochs 15
+python train.py --model zoo_alexnet --dataset cifar10 --epochs 10 --batch-size 32 --no-augment
+
+# Tiny ImageNet
+python train.py --model lenet --dataset tiny_imagenet --epochs 5 --no-augment
+python train.py --model lenet_modern --dataset tiny_imagenet --epochs 5 --no-augment
+python train.py --model alexnet --norm none --dataset tiny_imagenet --epochs 10 --no-augment
+python train.py --model alexnet --norm lrn --dataset tiny_imagenet --epochs 10 --no-augment
+python train.py --model alexnet --norm bn --dataset tiny_imagenet --epochs 10 --no-augment
+python train.py --model alexnet --norm bn --dataset tiny_imagenet --epochs 15
+python train.py --model zoo_alexnet --dataset tiny_imagenet --epochs 10 --batch-size 32 --no-augment
+
+# CIFAR-10 multi-seed comparison
+for seed in 42 123 999; do python train.py --model alexnet --norm bn --dataset cifar10 --epochs 15 --seed "$seed" --no-augment; done
+for seed in 42 123 999; do python train.py --model alexnet --norm bn --dataset cifar10 --epochs 15 --seed "$seed"; done
